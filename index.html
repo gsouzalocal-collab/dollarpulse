@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOLLARPULSE — Trending Products</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b0b0f;
+      color: #ffffff;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 24px 20px;
+      border-bottom: 1px solid #24242c;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .tagline {
+      margin-top: 8px;
+      color: #a7a7b3;
+      font-size: 14px;
+    }
+
+    .hero {
+      padding: 55px 20px 35px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 38px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .hero p {
+      color: #a7a7b3;
+      max-width: 600px;
+      margin: auto;
+      line-height: 1.6;
+    }
+
+    .section {
+      padding: 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .section-title {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .product {
+      background: #15151c;
+      border: 1px solid #272731;
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #262611;
+      color: #f5d84b;
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 18px;
+    }
+
+    .product h3 {
+      font-size: 19px;
+      margin-bottom: 10px;
+    }
+
+    .price {
+      font-size: 25px;
+      font-weight: bold;
+      margin: 15px 0;
+    }
+
+    .score {
+      color: #a7a7b3;
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    .button {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      background: #ffffff;
+      color: #0b0b0f;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      padding: 50px 20px 30px;
+      color: #777783;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">DOLLARPULSE</div>
+    <div class="tagline">The products people are buying right now.</div>
+  </header>
+
+  <section class="hero">
+    <h1>What's Hot Right Now?</h1>
+    <p>
+      Discover trending products, interesting deals and products worth checking out.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">🔥 Trending Products</h2>
+
+    <div class="products">
+
+      <div class="product">
+        <span class="badge">HOT</span>
+        <h3>Trending Product #1</h3>
+        <div class="price">$39.99</div>
+        <div class="score">DOLLARPULSE SCORE: 94/100</div>
+        <a class="button" href="#">VIEW DEAL</a>
+      </div>
+
+      <div class="product">
+        <span class="badge">HOT</span>
+        <h3>Trending Product #2</h3>
+        <div class="price">$24.99</div>
+        <div class="score">DOLLARPULSE SCORE: 91/100</div>
+        <a class="button" href="#">VIEW DEAL</a>
+      </div>
+
+      <div class="product">
+        <span class="badge">RISING</span>
+        <h3>Trending Product #3</h3>
+        <div class="price">$59.99</div>
+        <div class="score">DOLLARPULSE SCORE: 88/100</div>
+        <a class="button" href="#">VIEW DEAL</a>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    © 2026 DOLLARPULSE. Product links may earn us a commission.
+  </footer>
+
+</body>
+</html>
