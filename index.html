@@ -493,6 +493,36 @@
     © 2026 DOLLARPULSE. All rights reserved.
 
   </footer>
+<script>
+  const SUPABASE_URL = "https://xsuxtehfnljdezmcdkej.supabase.co";
 
+  const SUPABASE_ANON_KEY = "sb_publishable_79PcyUKr-Bn2G82Rn5QEhA_bnYo1C9q";
+
+  async function loadProducts() {
+    try {
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/products?select=*`,
+        {
+          headers: {
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erro ao conectar com o Supabase");
+      }
+
+      const products = await response.json();
+
+      console.log("DOLLARPULSE — produtos carregados:", products);
+    } catch (error) {
+      console.error("DOLLARPULSE — erro:", error);
+    }
+  }
+
+  loadProducts();
+</script>
 </body>
 </html>
