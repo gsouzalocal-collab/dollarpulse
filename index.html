@@ -416,13 +416,19 @@
 
     const { data, error } =
       await supabaseClient
-        .from("trends")
-        .select("*")
-        .eq("status", "active")
+        .from("products")
+        .select(`
+          *,
+          product_scores (
+            demand_score,
+            competition_score,
+            trend_score,
+            opportunity_score
+          )
+        `)
         .order("score", {
           ascending: false
-        })
-        .limit(1);
+        });
 
     if (error) {
 
@@ -521,7 +527,7 @@
       return;
     }
 
-    container.innerHTML = products.map(product => {
+    container.innerHTML = products.map(product => { const score = product.product_scores?.[0] || {};
 
       const rating =
         product.rating != null
@@ -583,7 +589,14 @@
             <div class="price">
               ${price}
             </div>
-
+<div style="
+  color:#20e87a;
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:15px;
+">
+  Opportunity Score: ${product.opportunity_score ?? "—"}
+</div>
             <a
               href="${escapeAttribute(destination)}"
               class="deal-button"
