@@ -1,339 +1,461 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOLLARPULSE — Discover What's Hot</title>
 
-  <title>DOLLARPULSE — Trending Products</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+:root{
+  --bg:#07090c;
+  --panel:#0e1217;
+  --line:#202833;
+  --text:#f5f7fa;
+  --muted:#8993a1;
+  --green:#20e87a;
+  --gold:#ffd45c;
+}
 
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #09090d;
-      color: #ffffff;
-      min-height: 100vh;
-    }
+body{
+  font-family:Inter,Arial,Helvetica,sans-serif;
+  background:radial-gradient(circle at 50% -10%,#132219 0,#07090c 38%);
+  color:var(--text);
+  min-height:100vh;
+}
 
-    header {
-      padding: 28px 20px;
-      text-align: center;
-      border-bottom: 1px solid #22222a;
-      background: #0c0c11;
-    }
+header{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:rgba(7,9,12,.88);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  padding:16px 20px;
+}
 
-    .logo {
-      font-size: 34px;
-      font-weight: 800;
-      letter-spacing: -1px;
-    }
+.header-inner{
+  max-width:1100px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
 
-    .logo span {
-      color: #20e87a;
-    }
+.logo{
+  font-size:27px;
+  font-weight:900;
+  letter-spacing:-1.5px;
+}
 
-    .tagline {
-      margin-top: 10px;
-      color: #888894;
-      font-size: 15px;
-    }
+.logo span{
+  color:var(--green);
+}
 
-    .hero {
-      padding: 50px 20px 30px;
-      text-align: center;
-    }
+.live{
+  font-size:11px;
+  font-weight:800;
+  color:var(--green);
+  border:1px solid #195b38;
+  background:#0d2418;
+  padding:7px 10px;
+  border-radius:99px;
+}
 
-    .hero h1 {
-      font-size: 42px;
-      line-height: 1.05;
-      margin-bottom: 14px;
-    }
+.hero{
+  max-width:900px;
+  margin:auto;
+  text-align:center;
+  padding:55px 20px 28px;
+}
 
-    .hero p {
-      color: #8d8d98;
-      font-size: 16px;
-      line-height: 1.5;
-      max-width: 560px;
-      margin: auto;
-    }
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  color:var(--green);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+  margin-bottom:16px;
+}
 
-    .trend-box {
-      max-width: 1100px;
-      margin: 10px auto 20px;
-      padding: 0 20px;
-    }
+.hero h1{
+  font-size:clamp(42px,9vw,72px);
+  line-height:.96;
+  letter-spacing:-3px;
+  margin-bottom:17px;
+}
 
-    .trend-title {
-      color: #777782;
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 10px;
-    }
+.hero h1 span{
+  color:var(--green);
+}
 
-    .trend {
-      background: #111117;
-      border: 1px solid #24242d;
-      border-radius: 16px;
-      padding: 18px;
-    }
+.hero p{
+  max-width:600px;
+  margin:auto;
+  color:var(--muted);
+  font-size:16px;
+  line-height:1.55;
+}
 
-    .trend-name {
-      font-size: 21px;
-      font-weight: 800;
-    }
+.search{
+  max-width:620px;
+  margin:26px auto 0;
+  display:flex;
+  background:#10151b;
+  border:1px solid #28313b;
+  border-radius:14px;
+  padding:5px;
+}
 
-    .trend-description {
-      color: #858591;
-      font-size: 14px;
-      line-height: 1.5;
-      margin-top: 7px;
-    }
+.search input{
+  width:100%;
+  background:transparent;
+  border:0;
+  outline:0;
+  color:#fff;
+  padding:13px;
+  font-size:15px;
+}
 
-    .trend-meta {
-      color: #20e87a;
-      font-size: 12px;
-      font-weight: 700;
-      margin-top: 10px;
-    }
+.search input::placeholder{
+  color:#687381;
+}
 
-    .categories {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding: 15px 20px 25px;
-      scrollbar-width: none;
-      max-width: 1100px;
-      margin: auto;
-    }
+.trend-wrap{
+  max-width:1100px;
+  margin:12px auto 0;
+  padding:0 20px;
+}
 
-    .categories::-webkit-scrollbar {
-      display: none;
-    }
+.trend{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(135deg,#111a16,#0d1217);
+  border:1px solid #234232;
+  border-radius:18px;
+  padding:20px;
+}
 
-    .category {
-      flex: 0 0 auto;
-      padding: 10px 16px;
-      border: 1px solid #292933;
-      border-radius: 30px;
-      color: #cfcfd6;
-      font-size: 14px;
-      background: #111117;
-      cursor: pointer;
-    }
+.kicker{
+  font-size:10px;
+  font-weight:900;
+  color:#748080;
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
 
-    .category.active {
-      background: #20e87a;
-      color: #06100a;
-      border-color: #20e87a;
-      font-weight: 700;
-    }
+.trend-name{
+  font-size:22px;
+  font-weight:900;
+}
 
-    .section {
-      padding: 10px 20px 50px;
-      max-width: 1100px;
-      margin: auto;
-    }
+.trend-description{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5;
+  margin-top:5px;
+  max-width:700px;
+}
 
-    .section-title {
-      font-size: 24px;
-      margin: 15px 0 20px;
-    }
+.trend-meta{
+  color:var(--green);
+  font-size:12px;
+  font-weight:800;
+  margin-top:11px;
+}
 
-    .products {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 18px;
-    }
+.categories{
+  max-width:1100px;
+  margin:auto;
+  display:flex;
+  gap:9px;
+  overflow-x:auto;
+  padding:18px 20px 12px;
+  scrollbar-width:none;
+}
 
-    .card {
-      background: #111117;
-      border: 1px solid #24242d;
-      border-radius: 18px;
-      overflow: hidden;
-      transition: transform 0.2s ease;
-    }
+.categories::-webkit-scrollbar{
+  display:none;
+}
 
-    .card:hover {
-      transform: translateY(-3px);
-    }
+.category{
+  flex:0 0 auto;
+  border:1px solid #252e38;
+  background:#0e1319;
+  color:#bfc7d0;
+  border-radius:99px;
+  padding:9px 14px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
 
-    .product-image {
-      height: 210px;
-      background: linear-gradient(135deg, #1b1b24, #101016);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 64px;
-      overflow: hidden;
-    }
+.category.active{
+  background:var(--green);
+  border-color:var(--green);
+  color:#06100a;
+}
 
-    .product-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+.section{
+  max-width:1100px;
+  margin:auto;
+  padding:15px 20px 55px;
+}
 
-    .card-content {
-      padding: 18px;
-    }
+.section-head{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:15px;
+  margin:12px 0 18px;
+}
 
-    .badge {
-      display: inline-block;
-      background: #173a28;
-      color: #35ed8a;
-      padding: 5px 9px;
-      border-radius: 7px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
+.section-title{
+  font-size:26px;
+  letter-spacing:-.7px;
+}
 
-    .card h3 {
-      font-size: 18px;
-      line-height: 1.3;
-      margin-bottom: 9px;
-    }
+.section-sub{
+  color:#697381;
+  font-size:12px;
+  margin-top:4px;
+}
 
-    .description {
-      color: #858591;
-      font-size: 13px;
-      line-height: 1.5;
-      margin-bottom: 12px;
-    }
+.products{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+}
 
-    .rating {
-      color: #ffd45c;
-      font-size: 14px;
-      margin-bottom: 12px;
-    }
+.card{
+  position:relative;
+  background:linear-gradient(180deg,#11161c,#0d1116);
+  border:1px solid #202832;
+  border-radius:18px;
+  overflow:hidden;
+  transition:.2s ease;
+  box-shadow:0 8px 30px rgba(0,0,0,.18);
+}
 
-    .price {
-      font-size: 24px;
-      font-weight: 800;
-      margin-bottom: 12px;
-    }
+.card:hover{
+  transform:translateY(-4px);
+  border-color:#31503f;
+}
 
-    .opportunity {
-      display: inline-block;
-      color: #20e87a;
-      font-size: 12px;
-      font-weight: 800;
-      margin-bottom: 15px;
-      padding: 6px 9px;
-      border: 1px solid #1c4b32;
-      border-radius: 7px;
-      background: #102219;
-    }
+.product-image{
+  height:235px;
+  background:#151a20;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  position:relative;
+}
 
-    .deal-button {
-      display: block;
-      width: 100%;
-      padding: 13px;
-      text-align: center;
-      text-decoration: none;
-      border-radius: 10px;
-      background: #20e87a;
-      color: #06100a;
-      font-weight: 800;
-      font-size: 15px;
-    }
+.product-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
 
-    .deal-button:hover {
-      background: #32f28b;
-    }
+.rank{
+  position:absolute;
+  left:12px;
+  top:12px;
+  background:rgba(7,9,12,.86);
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:9px;
+  padding:6px 9px;
+  font-size:11px;
+  font-weight:900;
+}
 
-    .loading,
-    .empty,
-    .error {
-      text-align: center;
-      padding: 40px 20px;
-      color: #858591;
-    }
+.card-content{
+  padding:17px;
+}
 
-    .error {
-      color: #ff7777;
-    }
+.badge{
+  display:inline-block;
+  background:#10251a;
+  color:#38ef8b;
+  border:1px solid #1c4930;
+  padding:5px 8px;
+  border-radius:7px;
+  font-size:10px;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
 
-    .info {
-      margin-top: 35px;
-      padding: 22px;
-      background: #101016;
-      border: 1px solid #22222a;
-      border-radius: 15px;
-      color: #858591;
-      font-size: 13px;
-      line-height: 1.6;
-      text-align: center;
-    }
+.card h3{
+  font-size:18px;
+  line-height:1.3;
+  margin-bottom:8px;
+}
 
-    footer {
-      text-align: center;
-      padding: 35px 20px;
-      border-top: 1px solid #22222a;
-      color: #686873;
-      font-size: 12px;
-      line-height: 1.7;
-    }
+.rating{
+  color:var(--gold);
+  font-size:13px;
+  margin-bottom:9px;
+}
 
-    footer strong {
-      color: #ffffff;
-    }
+.rating span{
+  color:#8993a1;
+  margin-left:4px;
+}
 
-    @media (min-width: 650px) {
-      .products {
-        grid-template-columns: repeat(2, 1fr);
-      }
+.price{
+  font-size:26px;
+  font-weight:900;
+  letter-spacing:-.7px;
+  margin:7px 0 12px;
+}
 
-      .hero h1 {
-        font-size: 56px;
-      }
-    }
+.score-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border:1px solid #26322b;
+  background:#0c1711;
+  border-radius:12px;
+  padding:10px 11px;
+  margin-bottom:13px;
+}
 
-    @media (min-width: 950px) {
-      .products {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-  </style>
+.score-label{
+  font-size:10px;
+  color:#78867e;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.7px;
+}
+
+.score-value{
+  color:var(--green);
+  font-size:20px;
+  font-weight:900;
+}
+
+.deal-button{
+  display:block;
+  width:100%;
+  padding:13px;
+  text-align:center;
+  text-decoration:none;
+  border-radius:11px;
+  background:var(--green);
+  color:#06100a;
+  font-weight:900;
+  font-size:14px;
+}
+
+.deal-button:hover{
+  filter:brightness(1.08);
+}
+
+.empty,
+.error,
+.loading{
+  grid-column:1/-1;
+  text-align:center;
+  padding:40px 20px;
+  color:#7f8995;
+}
+
+.error{
+  color:#ff7d7d;
+}
+
+.info{
+  margin-top:28px;
+  padding:18px;
+  background:#0c1015;
+  border:1px solid #1c232c;
+  border-radius:14px;
+  color:#737d89;
+  font-size:12px;
+  line-height:1.6;
+  text-align:center;
+}
+
+footer{
+  text-align:center;
+  padding:30px 20px;
+  border-top:1px solid #171d24;
+  color:#626d79;
+  font-size:11px;
+  line-height:1.7;
+}
+
+footer strong{
+  color:#fff;
+}
+
+@media(min-width:650px){
+  .products{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(min-width:950px){
+  .products{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <div class="logo">
-    DOLLAR<span>PULSE</span>
-  </div>
+  <div class="header-inner">
+    <div class="logo">
+      DOLLAR<span>PULSE</span>
+    </div>
 
-  <div class="tagline">
-    Discover what shoppers are buying.
+    <div class="live">
+      ● LIVE PULSE
+    </div>
   </div>
 </header>
 
 <section class="hero">
 
+  <div class="eyebrow">
+    🔥 LIVE PRODUCT DISCOVERY
+  </div>
+
   <h1>
-    Discover What's Trending
+    What's <span>Hot</span> Right Now?
   </h1>
 
   <p>
-    Find products gaining attention from shoppers across the USA.
+    Discover products gaining attention before they become yesterday's trend.
   </p>
+
+  <div class="search">
+    <input
+      id="search"
+      type="search"
+      placeholder="Search products..."
+      autocomplete="off"
+    >
+  </div>
 
 </section>
 
-<section class="trend-box">
+<section class="trend-wrap">
 
-  <div class="trend-title">
+  <div class="kicker">
     🔥 Current Trend
   </div>
 
@@ -350,36 +472,48 @@
 <div class="categories">
 
   <div class="category active" data-category="all">
-    Trending
+    🔥 Trending
   </div>
 
   <div class="category" data-category="Tech">
-    Tech
+    ⚡ Tech
   </div>
 
   <div class="category" data-category="Home">
-    Home
+    🏠 Home
   </div>
 
   <div class="category" data-category="Beauty">
-    Beauty
+    ✨ Beauty
   </div>
 
   <div class="category" data-category="Fitness">
-    Fitness
+    💪 Fitness
   </div>
 
   <div class="category" data-category="Gadgets">
-    Gadgets
+    🔌 Gadgets
   </div>
 
 </div>
 
 <main class="section">
 
-  <h2 class="section-title">
-    🔥 Trending Now
-  </h2>
+  <div class="section-head">
+
+    <div>
+
+      <h2 class="section-title">
+        Today's Top Picks
+      </h2>
+
+      <div class="section-sub">
+        Ranked by DOLLARPULSE Opportunity Score
+      </div>
+
+    </div>
+
+  </div>
 
   <div id="products" class="products">
 
@@ -391,12 +525,9 @@
 
   <div class="info">
 
-    DOLLARPULSE helps shoppers discover interesting products
-    and emerging trends.
+    Prices, availability, ratings and offers may change.
 
-    Product availability, prices and offers may change.
-
-    <br><br>
+    <br>
 
     As an Amazon Associate, DOLLARPULSE earns from qualifying purchases.
 
@@ -420,297 +551,319 @@
 
 <script>
 
-  /* ================================
-     SUPABASE
-  ================================= */
+const SUPABASE_URL =
+  "https://xsuxtehfnljdezmcdkej.supabase.co";
 
-  const SUPABASE_URL =
-    "https://xsuxtehfnljdezmcdkej.supabase.co";
+const SUPABASE_KEY =
+  "sb_publishable_79PcyUKr-Bn2G82Rn5QEhA_bnYo1C9q";
 
-  const SUPABASE_KEY =
-    "sb_publishable_79PcyUKr-Bn2G82Rn5QEhA_bnYo1C9q";
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
-  const supabaseClient =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
+
+let allProducts = [];
+
+
+/* ================================
+   ESCAPE HTML
+================================ */
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* ================================
+   LOAD CURRENT TREND
+================================ */
+
+async function loadTrend(){
+
+  const container =
+    document.getElementById("trend");
+
+
+  const { data, error } =
+    await supabaseClient
+      .from("trends")
+      .select("*")
+      .eq("status","active")
+      .order("score",{
+        ascending:false
+      })
+      .limit(1);
+
+
+  if(error){
+
+    console.error(
+      "Trend error:",
+      error
     );
 
+    container.innerHTML = `
+      <div class="error">
+        Unable to load trend.
+      </div>
+    `;
 
-  let allProducts = [];
-
-
-  /* ================================
-     ESCAPE HTML
-  ================================= */
-
-  function escapeHTML(value) {
-
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+    return;
 
   }
 
 
-  /* ================================
-     LOAD CURRENT TREND
-  ================================= */
-
-  async function loadTrend() {
-
-    const container =
-      document.getElementById("trend");
-
-    const { data, error } =
-      await supabaseClient
-        .from("trends")
-        .select("*")
-        .eq("status", "active")
-        .order("score", {
-          ascending: false
-        })
-        .limit(1);
-
-
-    if (error) {
-
-      console.error(
-        "Trend error:",
-        error
-      );
-
-      container.innerHTML = `
-        <div class="error">
-          Unable to load trend.
-        </div>
-      `;
-
-      return;
-
-    }
-
-
-    if (!data || data.length === 0) {
-
-      container.innerHTML = `
-        <div class="empty">
-          No trends available yet.
-        </div>
-      `;
-
-      return;
-
-    }
-
-
-    const trend = data[0];
-
+  if(!data || data.length === 0){
 
     container.innerHTML = `
+      <div class="empty">
+        No trends available yet.
+      </div>
+    `;
 
-      <div class="trend">
+    return;
 
-        <div class="trend-name">
-          ${escapeHTML(
-            trend.name || "Current Trend"
-          )}
-        </div>
+  }
 
-        <div class="trend-description">
-          ${escapeHTML(
-            trend.description || ""
-          )}
-        </div>
 
-        <div class="trend-meta">
+  const trend =
+    data[0];
 
-          ${escapeHTML(
-            trend.category || "Trending"
-          )}
 
-          · Trend score ${trend.score ?? 0}
+  container.innerHTML = `
 
-        </div>
+    <div class="trend">
+
+      <div class="trend-name">
+        ${escapeHTML(
+          trend.name ||
+          "Current Trend"
+        )}
+      </div>
+
+      <div class="trend-description">
+        ${escapeHTML(
+          trend.description ||
+          ""
+        )}
+      </div>
+
+      <div class="trend-meta">
+
+        ${escapeHTML(
+          trend.category ||
+          "Trending"
+        )}
+
+        · Trend score ${trend.score ?? 0}
 
       </div>
 
+    </div>
+
+  `;
+
+}
+
+
+/* ================================
+   LOAD PRODUCTS + SCORES
+================================ */
+
+async function loadProducts(){
+
+  const container =
+    document.getElementById("products");
+
+
+  const [
+    productsResult,
+    scoresResult
+  ] = await Promise.all([
+
+    supabaseClient
+      .from("products")
+      .select("*")
+      .eq("status","active"),
+
+    supabaseClient
+      .from("product_scores")
+      .select(
+        "product_id, demand_score, competition_score, trend_score, opportunity_score"
+      )
+
+  ]);
+
+
+  if(productsResult.error){
+
+    console.error(
+      "Products error:",
+      productsResult.error
+    );
+
+    container.innerHTML = `
+      <div class="error">
+        Unable to load products.
+      </div>
     `;
 
-  }
-
-
-  /* ================================
-     LOAD PRODUCTS
-  ================================= */
-
-  async function loadProducts() {
-
-    const container =
-      document.getElementById("products");
-
-
-    const { data: products, error: productsError } =
-      await supabaseClient
-        .from("products")
-        .select("*");
-
-
-    if (productsError) {
-
-      console.error(
-        "Products error:",
-        productsError
-      );
-
-      container.innerHTML = `
-        <div class="error">
-          Unable to load products.
-        </div>
-      `;
-
-      return;
-
-    }
-
-
-    const { data: scores, error: scoresError } =
-      await supabaseClient
-        .from("product_scores")
-        .select(
-          "product_id, demand_score, competition_score, trend_score, opportunity_score"
-        );
-
-
-    if (scoresError) {
-
-      console.error(
-        "Scores error:",
-        scoresError
-      );
-
-      container.innerHTML = `
-        <div class="error">
-          Unable to load product scores.
-        </div>
-      `;
-
-      return;
-
-    }
-
-
-    const productList =
-      products || [];
-
-    const scoreList =
-      scores || [];
-
-
-    allProducts =
-      productList.map(product => {
-
-        const score =
-          scoreList.find(
-            item =>
-              item.product_id === product.id
-          );
-
-
-        return {
-
-          ...product,
-
-          demand_score:
-            score?.demand_score ?? null,
-
-          competition_score:
-            score?.competition_score ?? null,
-
-          trend_score:
-            score?.trend_score ?? null,
-
-          opportunity_score:
-            score?.opportunity_score ?? null
-
-        };
-
-      });
-
-
-    /* ================================
-       SORT BY OPPORTUNITY SCORE
-    ================================= */
-
-    allProducts.sort(
-      (a, b) => {
-
-        const scoreA =
-          a.opportunity_score ?? -1;
-
-        const scoreB =
-          b.opportunity_score ?? -1;
-
-        return scoreB - scoreA;
-
-      }
-    );
-
-
-    renderProducts(
-      allProducts
-    );
+    return;
 
   }
 
 
+  if(scoresResult.error){
+
+    console.error(
+      "Scores error:",
+      scoresResult.error
+    );
+
+    container.innerHTML = `
+      <div class="error">
+        Unable to load product scores.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  const products =
+    productsResult.data || [];
+
+  const scores =
+    scoresResult.data || [];
+
+
+  const scoreMap =
+    new Map(
+      scores.map(score => [
+        score.product_id,
+        score
+      ])
+    );
+
+
+  allProducts =
+    products.map(product => {
+
+      const score =
+        scoreMap.get(product.id);
+
+
+      return {
+
+        ...product,
+
+        demand_score:
+          score?.demand_score ?? null,
+
+        competition_score:
+          score?.competition_score ?? null,
+
+        trend_score:
+          score?.trend_score ?? null,
+
+        opportunity_score:
+          score?.opportunity_score ?? null
+
+      };
+
+    });
+
+
   /* ================================
-     RENDER PRODUCTS
+     SORT BY OPPORTUNITY SCORE
   ================================= */
 
-  function renderProducts(products) {
+  allProducts.sort(
+    (a,b) => {
 
-    const container =
-      document.getElementById("products");
+      const scoreA =
+        a.opportunity_score ?? -1;
 
+      const scoreB =
+        b.opportunity_score ?? -1;
 
-    if (!products.length) {
-
-      container.innerHTML = `
-        <div class="empty">
-          No products available yet.
-        </div>
-      `;
-
-      return;
+      return scoreB - scoreA;
 
     }
+  );
 
 
-    container.innerHTML =
-      products.map(product => {
+  renderProducts(
+    allProducts
+  );
+
+}
+
+
+/* ================================
+   RENDER PRODUCTS
+================================ */
+
+function renderProducts(products){
+
+  const container =
+    document.getElementById("products");
+
+
+  if(!products.length){
+
+    container.innerHTML = `
+      <div class="empty">
+        No matching products found.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    products.map(
+      (product,index) => {
+
 
         const rating =
           product.rating != null
-            ? `★★★★★ ${Number(
-                product.rating
-              ).toFixed(1)}`
+
+            ? `
+              ★★★★★
+
+              <span>
+                ${Number(
+                  product.rating
+                ).toFixed(1)}
+
+                ·
+
+                ${(product.review_count ?? 0)
+                  .toLocaleString()}
+
+                reviews
+              </span>
+            `
+
             : "";
-
-
-        const price =
-          product.price != null
-            ? `$${Number(
-                product.price
-              ).toFixed(2)}`
-            : "See price";
 
 
         const image =
           product.image_url
+
             ? `
               <img
                 src="${escapeHTML(
@@ -720,8 +873,10 @@
                   product.name ||
                   "Product"
                 )}"
+                loading="lazy"
               >
             `
+
             : "🛍️";
 
 
@@ -731,10 +886,8 @@
           "#";
 
 
-        const opportunity =
-          product.opportunity_score != null
-            ? `Opportunity Score: ${product.opportunity_score}`
-            : "Opportunity Score: —";
+        const score =
+          product.opportunity_score;
 
 
         return `
@@ -742,63 +895,82 @@
           <article class="card">
 
             <div class="product-image">
+
+              <div class="rank">
+                #${index + 1}
+              </div>
+
               ${image}
+
             </div>
 
 
             <div class="card-content">
 
               <span class="badge">
+
                 ${escapeHTML(
                   product.category ||
                   "Trending"
                 )}
+
               </span>
 
 
               <h3>
+
                 ${escapeHTML(
                   product.name ||
                   "Product"
                 )}
+
               </h3>
 
 
               ${
-                product.description
-                  ? `
-                    <div class="description">
-                      ${escapeHTML(
-                        product.description
-                      )}
-                    </div>
-                  `
-                  : ""
-              }
-
-
-              ${
                 rating
+
                   ? `
                     <div class="rating">
-                      ${escapeHTML(
-                        rating
-                      )}
+                      ${rating}
                     </div>
                   `
+
                   : ""
               }
 
 
               <div class="price">
-                ${price}
+
+                ${
+                  product.price != null
+
+                    ? `$${Number(
+                        product.price
+                      ).toFixed(2)}`
+
+                    : "See price"
+                }
+
               </div>
 
 
-              <div class="opportunity">
-                ${escapeHTML(
-                  opportunity
-                )}
+              <div class="score-row">
+
+                <div class="score-label">
+                  Pulse Score
+                </div>
+
+                <div class="score-value">
+
+                  ${
+                    score != null
+                      ? `${score}/100`
+                      : "—"
+                  }
+
+                </div>
+
               </div>
 
 
@@ -808,9 +980,11 @@
                 )}"
                 class="deal-button"
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener noreferrer sponsored"
               >
-                View Deal
+
+                See Deal →
+
               </a>
 
             </div>
@@ -819,100 +993,166 @@
 
         `;
 
-      }).join("");
+      }
 
-  }
+    ).join("");
 
-
-  /* ================================
-     CATEGORY FILTER
-  ================================= */
-
-  function setupCategories() {
-
-    const buttons =
-      document.querySelectorAll(
-        ".category"
-      );
+}
 
 
-    buttons.forEach(button => {
+/* ================================
+   CATEGORY FILTER
+================================ */
 
-      button.addEventListener(
-        "click",
-        () => {
+function setupCategories(){
 
-          buttons.forEach(item => {
-
-            item.classList.remove(
-              "active"
-            );
-
-          });
+  const buttons =
+    document.querySelectorAll(
+      ".category"
+    );
 
 
-          button.classList.add(
+  buttons.forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+
+        buttons.forEach(item => {
+
+          item.classList.remove(
             "active"
           );
 
-
-          const category =
-            button.dataset.category;
+        });
 
 
-          if (category === "all") {
-
-            renderProducts(
-              allProducts
-            );
-
-            return;
-
-          }
+        button.classList.add(
+          "active"
+        );
 
 
-          const filtered =
-            allProducts.filter(
-              product => {
+        const category =
+          button.dataset.category;
 
-                return String(
-                  product.category || ""
-                ).toLowerCase() ===
-                category.toLowerCase();
 
-              }
-            );
-
+        if(category === "all"){
 
           renderProducts(
-            filtered
+            allProducts
           );
 
+          return;
+
         }
+
+
+        const filtered =
+          allProducts.filter(
+            product => {
+
+              return String(
+                product.category ||
+                ""
+              ).toLowerCase()
+              ===
+              category.toLowerCase();
+
+            }
+          );
+
+
+        renderProducts(
+          filtered
+        );
+
+      }
+    );
+
+  });
+
+}
+
+
+/* ================================
+   SEARCH
+================================ */
+
+function setupSearch(){
+
+  const input =
+    document.getElementById(
+      "search"
+    );
+
+
+  input.addEventListener(
+    "input",
+    () => {
+
+
+      const query =
+        input.value
+          .trim()
+          .toLowerCase();
+
+
+      const filtered =
+        allProducts.filter(
+          product => {
+
+            const searchableText = `
+
+              ${product.name || ""}
+
+              ${product.category || ""}
+
+              ${product.description || ""}
+
+            `.toLowerCase();
+
+
+            return searchableText
+              .includes(query);
+
+          }
+        );
+
+
+      renderProducts(
+        filtered
       );
 
-    });
+    }
+  );
 
-  }
-
-
-  /* ================================
-     START
-  ================================= */
-
-  async function startApp() {
-
-    await Promise.all([
-      loadTrend(),
-      loadProducts()
-    ]);
-
-    setupCategories();
-
-  }
+}
 
 
-  startApp();
+/* ================================
+   START APPLICATION
+================================ */
+
+async function startApp(){
+
+  await Promise.all([
+
+    loadTrend(),
+
+    loadProducts()
+
+  ]);
+
+
+  setupCategories();
+
+  setupSearch();
+
+}
+
+
+startApp();
 
 </script>
 
